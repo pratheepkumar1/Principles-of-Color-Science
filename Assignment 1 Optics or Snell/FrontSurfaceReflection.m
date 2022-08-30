@@ -20,7 +20,7 @@ for i = 1 : length(angle_incidence)
    surface_reflection(i) = (r_parallel + r_perpendicular ) / 2;
 end
 
-
+disp(surface_reflection)
 plot(angle_incidence,surface_reflection)
 
 xlabel('Anlge of Incidence (in degrees)')
