@@ -1,4 +1,4 @@
-n_material = 1.6410;
+n_material = 1.46;
 n_air = 1;
 surface_reflection = zeros(9,1);
 angle_incidence = linspace(0,80,9)
