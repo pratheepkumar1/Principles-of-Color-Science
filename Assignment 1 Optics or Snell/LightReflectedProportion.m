@@ -21,15 +21,15 @@ disp(surface_reflection)
 
 
 % Calculations
-a = cosd(angle_incidence)
-b = (n_material/n_air)^2
-c = sind(angle_incidence^2)
-pl_numerator = a - sqrt(b-c)
-pl_denominator = a + sqrt(b-c)
-r_pl = (pl_numerator/pl_denominator)^2
-
-pr_numerator = b*a - sqrt(b-c)
-pr_denominator = b*a + sqrt(b-c)
-r_pr = (pr_numerator/pr_denominator)^2
-
-s_ref = (r_pl + r_pr)/2
+% a = cosd(angle_incidence)
+% b = (n_material/n_air)^2
+% c = sind(angle_incidence^2)
+% pl_numerator = a - sqrt(b-c)
+% pl_denominator = a + sqrt(b-c)
+% r_pl = (pl_numerator/pl_denominator)^2
+% 
+% pr_numerator = b*a - sqrt(b-c)
+% pr_denominator = b*a + sqrt(b-c)
+% r_pr = (pr_numerator/pr_denominator)^2
+% 
+% s_ref = (r_pl + r_pr)/2

@@ -23,6 +23,7 @@ end
 disp(surface_reflection)
 h = figure;
 plot(angle_incidence,surface_reflection)
+grid on
 
 datacursormode(h,'on');
 xlabel('Angle of Incidence (in degrees)')
