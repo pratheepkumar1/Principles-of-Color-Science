@@ -15,4 +15,12 @@ s_daylight_matrix = diag(daylight_source);
 [color_checker_numRows,color_checker_numCols] = size(color_checker_dataset);
 r_matrix = color_checker_dataset{:,[2:color_checker_numCols]};
 
-LMS_incandescent = lms_matrix*s_incandescent_matrix*r_matrix;
+LMS_incandescent = transpose(lms_matrix * s_incandescent_matrix * r_matrix)
+LMS_daylight = transpose(lms_matrix * s_daylight_matrix * r_matrix)
+
+hold on
+L_daylight = plot(LMS_daylight(:,[1]));
+M_daylight = plot(LMS_daylight(:,[2]));
+S_daylight = plot(LMS_daylight(:,[3]));
+hold off
+grid on
