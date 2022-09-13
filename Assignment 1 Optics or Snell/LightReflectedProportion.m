@@ -1,4 +1,4 @@
-n_material = 1.6175;
+n_material = 1.6410;
 n_air = 1;
 angle_incidence = 55;
 
