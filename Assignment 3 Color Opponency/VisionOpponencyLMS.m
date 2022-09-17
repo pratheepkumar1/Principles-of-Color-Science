@@ -29,11 +29,14 @@ LMS_daylight
 
 %-----------------------------------------
 % Chromatic Adaptation Transformations (CAT)
+
+% Getting signals of a stimulus that appears white
 white_col_number = find(string(color_checker_dataset.Properties.VariableNames) == "White");
 LMS_white_incandescent = transpose(LMS_incandescent(white_col_number,:));
 LMS_white_daylight = transpose(LMS_daylight(white_col_number,:));
 
-degree_of_adaptation = 0.8; %d_factor (complete chromatic adaptation)
+% D_factor (complete chromatic adaptation = 1)
+degree_of_adaptation = 1;
 
 m_von_kries_incadescent_factor = diag((degree_of_adaptation*LMS_white_incandescent)+...
     ((1-degree_of_adaptation)*LMS_white_daylight))./(LMS_white_daylight);
@@ -57,15 +60,15 @@ opponency_incandescent;
 opponency_incandescent(19:24,:);
 opponency_incandescent(16,:);
 
+opponency_incandescent(:,1)
 opponency_daylight
-opponency_incandescent
 
 disp("Opponency for neutral patches (19-24)")
 opponency_incandescent(19:24,:)
 disp("Opponency for yellow (16)")
 opponency_incandescent(16,:)
 
-plot(opponency_incandescent(19:24,:))
+% plot(opponency_incandescent(19:24,:))
 
 % hold on
 % L_daylight = plot(LMS_daylight(:,[1]));
