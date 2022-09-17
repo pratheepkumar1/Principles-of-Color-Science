@@ -21,32 +21,53 @@ s_daylight_matrix = diag(daylight_source);
 r_matrix = color_checker_dataset{:,[2:color_checker_numCols]};
 
 % LMS values for all 24 ColorChecker samples
-LMS_incandescent = transpose(lms_matrix * s_incandescent_matrix * r_matrix)
+LMS_incandescent = transpose(lms_matrix * s_incandescent_matrix * r_matrix);
 LMS_daylight = transpose(lms_matrix * s_daylight_matrix * r_matrix);
 
+LMS_incandescent
+LMS_daylight
+
+%-----------------------------------------
 % Chromatic Adaptation Transformations (CAT)
 white_col_number = find(string(color_checker_dataset.Properties.VariableNames) == "White");
 LMS_white_incandescent = transpose(LMS_incandescent(white_col_number,:));
 LMS_white_daylight = transpose(LMS_daylight(white_col_number,:));
 
-degree_of_adaptation = 0.8; %d_factor
+degree_of_adaptation = 0.8; %d_factor (complete chromatic adaptation)
 
-CAT_von_kries_incadescent_factor = diag((degree_of_adaptation*LMS_white_incandescent)+...
+m_von_kries_incadescent_factor = diag((degree_of_adaptation*LMS_white_incandescent)+...
     ((1-degree_of_adaptation)*LMS_white_daylight))./(LMS_white_daylight);
 
-CAT_von_kries_daylight_factor = diag((degree_of_adaptation*LMS_white_daylight)+...
+m_von_kries_daylight_factor = diag((degree_of_adaptation*LMS_white_daylight)+...
     ((1-degree_of_adaptation)*LMS_white_incandescent))./(LMS_white_incandescent);
 
-LMS_daylight_von_kries = transpose(CAT_von_kries_daylight__factor * transpose(LMS_incandescent));
-LMS_incandescent_von_kries = transpose(CAT_von_kries_incadescent_factor * transpose(LMS_daylight))
+LMS_daylight_von_kries = transpose(m_von_kries_daylight_factor * transpose(LMS_incandescent));
+LMS_incandescent_von_kries = transpose(m_von_kries_incadescent_factor * transpose(LMS_daylight));
+
+LMS_incandescent_von_kries
+LMS_daylight_von_kries
+
+%--------------------------------------------
+%Opponency Signals
+m_opponency = [.64 .39 -0.01; 1.12 -1.5 0.34; 0.35 0.15 -0.53];
+gamma = 2.4;
+opponency_incandescent = transpose(m_opponency * transpose((LMS_incandescent_von_kries).^(1/gamma)));
+opponency_daylight = transpose(m_opponency * transpose((LMS_daylight_von_kries).^(1/gamma)));
+opponency_incandescent;
+opponency_incandescent(19:24,:);
+opponency_incandescent(16,:);
+
+opponency_daylight
+opponency_incandescent
 
 
-hold on
-L_daylight = plot(LMS_daylight(:,[1]));
-% M_daylight = plot(LMS_daylight(:,[2]));
-% S_daylight = plot(LMS_daylight(:,[3]));
-L_daylight_von_kries = plot(LMS_daylight_von_kries(:,[1]));
-% M_daylight_von_kries = plot(LMS_daylight_von_kries(:,[2]));
-% S_daylight_von_kries = plot(LMS_daylight_von_kries(:,[3]));
-hold off
-grid on
+
+% hold on
+% L_daylight = plot(LMS_daylight(:,[1]));
+% % M_daylight = plot(LMS_daylight(:,[2]));
+% % S_daylight = plot(LMS_daylight(:,[3]));
+% L_daylight_von_kries = plot(LMS_daylight_von_kries(:,[1]));
+% % M_daylight_von_kries = plot(LMS_daylight_von_kries(:,[2]));
+% % S_daylight_von_kries = plot(LMS_daylight_von_kries(:,[3]));
+% hold off
+% grid on
