@@ -60,7 +60,12 @@ opponency_incandescent(16,:);
 opponency_daylight
 opponency_incandescent
 
+disp("Opponency for neutral patches (19-24)")
+opponency_incandescent(19:24,:)
+disp("Opponency for yellow (16)")
+opponency_incandescent(16,:)
 
+plot(opponency_incandescent(19:24,:))
 
 % hold on
 % L_daylight = plot(LMS_daylight(:,[1]));
