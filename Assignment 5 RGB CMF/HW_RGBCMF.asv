@@ -1,0 +1,27 @@
+lms_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="LMS");
+rgb_spd_dataset = readtable("HW_DisplaySPD_Data.xlsx",Sheet="DisplaySPD");
+
+% Create LMS relative sensitivity matrix
+lms_matrix = transpose(lms_dataset{:,[2:4]});
+
+rgb_spd = rgb_spd_dataset{:,[2:4]};
+
+%Change in wavlength (d lamda)
+lambda = mean(diff(lms_dataset{:,1}));
+
+%LMS values of the display’s three primaries
+LMS_RGB = transpose((lms_matrix * rgb_spd)*lambda)
+
+%Normalizing by peak value
+M = max(LMS_RGB, [], 'all')
+LMS_RGB = LMS_RGB/M
+
+%color matching functions of the display’s primaries
+CMF_RGB = transpose(inv(LMS_RGB)*lms_matrix);
+
+
+for i = 1:3
+%     hold on
+    plot(lms_dataset{:,1},CMF_RGB(:,i))
+end
+% hold off
