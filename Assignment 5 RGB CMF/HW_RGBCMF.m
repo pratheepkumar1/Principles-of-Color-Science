@@ -37,5 +37,6 @@ grid on
 hold off
 xlabel('Wavelength (in nm)')
 ylabel('Tristimulus Values')
+xlim([380 730])
 title('Color Matching Functions of Primaries')
 
