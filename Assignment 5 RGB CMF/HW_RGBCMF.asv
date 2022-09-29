@@ -52,6 +52,8 @@ title('Color Matching Functions of Primaries')
 %% Question 4 & 5
 
 CIE_source = cie_dataset{:,[2:4]};
+CIE_source_norm = normalize(CIE_source,'norm',1)
+
 %Normalize r,g,b to unit area invidually and create a matrix
 r_bar = normalize(CMF_RGB(1,:),'norm',1)
 g_bar = normalize(CMF_RGB(2,:),'norm',1)
@@ -84,7 +86,7 @@ labels = ['Red','Green','Blue'];
 for i = 1:3
     hold on
     plot(lms_dataset{:,1},xyz_bar_norm_transpose(:,i),"LineWidth",2,"Color",colors(i))
-    
+     plot(lms_dataset{:,1},CIE_source_norm(:,i),"LineWidth",2,"Color",colors(i),"LineStyle","--")
 end
 
 grid on

@@ -69,13 +69,14 @@ M_function = transpose(CIE_source)*pinv(rgb_bar)
 
 
 % Calculating n_lamda to fix the residual error
-n_denominator = M_function(2,1)*(rgb_bar(1,:)) + M_function(2,2)*(rgb_bar(2,:)) + M_function(2,1)*(rgb_bar(3,:));
+n_denominator = M_function(2,1)*(rgb_bar(1,:)) + M_function(2,2)*(rgb_bar(2,:)) + M_function(2,3)*(rgb_bar(3,:));
 n_lamda = V_lamda/n_denominator;
 
 
 % m_function
-xyz_bar = transpose(CIE_source).*((rgb_bar)*diag(n_lamda))
+xyz_bar = M_function*((rgb_bar)*diag(n_lamda))
 
+%Normalize xyz-bar
 xyz_bar_norm = normalize(xyz_bar,'norm',1)
 xyz_bar_norm_transpose = transpose(xyz_bar)
 
@@ -85,8 +86,8 @@ colors=['r','g','b'];
 labels = ['Red','Green','Blue'];
 for i = 1:3
     hold on
-    plot(lms_dataset{:,1},xyz_bar_norm_transpose(:,i),"LineWidth",2,"Color",colors(i))
-     plot(lms_dataset{:,1},CIE_source_norm(:,i),"LineWidth",2,"Color",colors(i),"LineStyle","--")
+    plot(lms_dataset{:,1},xyz_bar_norm_transpose(:,i),"LineWidth",1,"Color",colors(i))
+     plot(lms_dataset{:,1},CIE_source(:,i),"LineWidth",1,"Color",colors(i),"LineStyle","--")
 end
 
 grid on
