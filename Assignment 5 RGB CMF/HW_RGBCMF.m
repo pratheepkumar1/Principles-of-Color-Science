@@ -32,7 +32,10 @@ CMF_RGB = (CMF_RGB/C);
 CMF_RGB_transpose = transpose(CMF_RGB);
 
 
+
+
 %Plotting the graph
+figure(1)
 colors=['r','g','b'];
 labels = ['Red','Green','Blue'];
 for i = 1:3
@@ -48,34 +51,50 @@ title('Color Matching Functions of Primaries')
 
 %% Question 4 & 5
 
-
-%Converting from CMFs to CIE standard colorimeter observer
-V_lamda = transpose(CIE_source(:,2))
-
-% Fixing residual error in calculating
 CIE_source = cie_dataset{:,[2:4]};
+CIE_source_norm = normalize(CIE_source,'norm',1)
 
-% x_lamda = transpose(CIE_source(:,1))*pinv(CMF_RGB)
-y_lamda = transpose(CIE_source(:,2))*pinv(CMF_RGB);
-% z_lamda = transpose(CIE_source(:,3))*pinv(CMF_RGB)
-% m_function = [x_lamda;y_lamda;z_lamda]
+%Normalize r,g,b to unit area invidually and create a matrix
+r_bar = normalize(CMF_RGB(1,:),'norm',1)
+g_bar = normalize(CMF_RGB(2,:),'norm',1)
+b_bar = normalize(CMF_RGB(3,:),'norm',1)
+rgb_bar = [r_bar;g_bar;b_bar]
 
-
-
-
-n_denominator = y_lamda(1)*(CMF_RGB_transpose(:,1)) + y_lamda(2)*(CMF_RGB_transpose(:,2)) + y_lamda(3)*(CMF_RGB_transpose(:,3));
-
-CIE_source(:,2);
-n_denominator;
-% n_lamda = cie_xyz(:,2)*transpose(n_denominator)
-% transpose(m_function*(CMF_RGB*n_lamda))
-
-% cie_dataset(:,"y_bar")
-% CMF_RGB(:,1)
+%Assigning y-bar value from the dataset to V_lamda
+V_lamda = transpose(CIE_source(:,2));
 
 
-%Least Squares(
-% transpose(cie_xyz(:,2))*pinv(CMF_RGB)
+% Least squares used to calculate the scalars of each color-matching function
+M_function = transpose(CIE_source)*pinv(rgb_bar)
+
+
+% Calculating n_lamda to fix the residual error
+n_denominator = M_function(2,1)*(rgb_bar(1,:)) + M_function(2,2)*(rgb_bar(2,:)) + M_function(2,1)*(rgb_bar(3,:));
+n_lamda = V_lamda/n_denominator;
+
+
+% m_function
+xyz_bar = transpose(CIE_source).*((rgb_bar)*diag(n_lamda))
+
+xyz_bar_norm = normalize(xyz_bar,'norm',1)
+xyz_bar_norm_transpose = transpose(xyz_bar)
+
+%Plotting the graphs
+figure(2)
+colors=['r','g','b'];
+labels = ['Red','Green','Blue'];
+for i = 1:3
+    hold on
+    plot(lms_dataset{:,1},xyz_bar_norm_transpose(:,i),"LineWidth",2,"Color",colors(i))
+     plot(lms_dataset{:,1},CIE_source_norm(:,i),"LineWidth",2,"Color",colors(i),"LineStyle","--")
+end
+
+grid on
+hold off
+xlabel('Wavelength (in nm)')
+ylabel('Tristimulus Values')
+xlim([380 730])
+title('Color Matching Functions of Primaries')
 
 
 
