@@ -3,24 +3,25 @@ rgb_spd_dataset = readtable("HW_DisplaySPD_Data.xlsx",Sheet="DisplaySPD");
 cie_dataset = readtable("HW_DisplaySPD_Data.xlsx",Sheet="CIE 1931");
 
 % Create LMS relative sensitivity matrix
-lms_matrix = transpose(lms_dataset{:,[2:4]});
+lms_matrix = transpose(lms_dataset{:,[2:4]})
 
-rgb_spd = rgb_spd_dataset{:,[2:4]};
+% Creating Spectral Radiance matrix
+rgb_spd = (rgb_spd_dataset{:,[2:4]})
 
 %Change in wavlength (d lamda)
 lambda = mean(diff(lms_dataset{:,1}));
 
 %LMS values of the display’s three primaries
-LMS_RGB = transpose((lms_matrix * rgb_spd)*lambda)
+LMS_RGB = (lms_matrix * rgb_spd)*lambda
 
 %Normalizing LMS by peak value
 M = max(LMS_RGB, [], 'all')
 LMS_RGB = LMS_RGB/M
 
 
-
 %color matching functions of the display’s primaries
 CMF_RGB = inv(LMS_RGB)*lms_matrix;
+
 
 %Normalizing CMF by peak value
 C = max(CMF_RGB, [], 'all');
@@ -28,7 +29,7 @@ CMF_RGB = (CMF_RGB/C)
 CMF_RGB_transpose = transpose(CMF_RGB)
 
 
-
+%Plotting the graph
 colors=['r','g','b'];
 labels = ['Red','Green','Blue']
 
@@ -53,20 +54,18 @@ title('Color Matching Functions of Primaries')
 CIE_source = cie_dataset{:,[2:4]};
 
 % x_lamda = transpose(CIE_source(:,1))*pinv(CMF_RGB)
-y_lamda = transpose(CIE_source(:,2))*pinv(CMF_RGB)
+y_lamda = transpose(CIE_source(:,2))*pinv(CMF_RGB);
 % z_lamda = transpose(CIE_source(:,3))*pinv(CMF_RGB)
 % m_function = [x_lamda;y_lamda;z_lamda]
 
 
 
 
-n_denominator = y_lamda(1)*(CMF_RGB_transpose(:,1)) + y_lamda(2)*(CMF_RGB_transpose(:,2)) + y_lamda(3)*(CMF_RGB_transpose(:,3))
+n_denominator = y_lamda(1)*(CMF_RGB_transpose(:,1)) + y_lamda(2)*(CMF_RGB_transpose(:,2)) + y_lamda(3)*(CMF_RGB_transpose(:,3));
 
-CIE_source(:,2)
-n_denominator
+CIE_source(:,2);
+n_denominator;
 % n_lamda = cie_xyz(:,2)*transpose(n_denominator)
-% 
-% 
 % transpose(m_function*(CMF_RGB*n_lamda))
 
 % cie_dataset(:,"y_bar")
