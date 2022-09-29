@@ -1,38 +1,40 @@
+%% Question 1 - 3
+
+% Reading the Data Set
 lms_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="LMS");
 rgb_spd_dataset = readtable("HW_DisplaySPD_Data.xlsx",Sheet="DisplaySPD");
 cie_dataset = readtable("HW_DisplaySPD_Data.xlsx",Sheet="CIE 1931");
 
 % Create LMS relative sensitivity matrix
-lms_matrix = transpose(lms_dataset{:,[2:4]})
+lms_matrix = transpose(lms_dataset{:,[2:4]});
 
 % Creating Spectral Radiance matrix
-rgb_spd = (rgb_spd_dataset{:,[2:4]})
+rgb_spd = transpose(rgb_spd_dataset{:,[2:4]});
 
 %Change in wavlength (d lamda)
 lambda = mean(diff(lms_dataset{:,1}));
 
-%LMS values of the display’s three primaries
-LMS_RGB = (lms_matrix * rgb_spd)*lambda
+%QUESTION 1: LMS values of the displayQs three primaries
+LMS_RGB = (lms_matrix * transpose(rgb_spd))*lambda;
 
 %Normalizing LMS by peak value
-M = max(LMS_RGB, [], 'all')
-LMS_RGB = LMS_RGB/M
+M = max(LMS_RGB, [], 'all');
+LMS_RGB = LMS_RGB/M;
 
 
-%color matching functions of the display’s primaries
+%QUESTION 2a: Color matching functions of the displayQs primaries
 CMF_RGB = inv(LMS_RGB)*lms_matrix;
 
 
 %Normalizing CMF by peak value
 C = max(CMF_RGB, [], 'all');
-CMF_RGB = (CMF_RGB/C)
-CMF_RGB_transpose = transpose(CMF_RGB)
+CMF_RGB = (CMF_RGB/C);
+CMF_RGB_transpose = transpose(CMF_RGB);
 
 
 %Plotting the graph
 colors=['r','g','b'];
-labels = ['Red','Green','Blue']
-
+labels = ['Red','Green','Blue'];
 for i = 1:3
     hold on
     plot(lms_dataset{:,1},CMF_RGB_transpose(:,i),"LineWidth",2,"Color",colors(i))
@@ -44,11 +46,11 @@ ylabel('Tristimulus Values')
 xlim([380 730])
 title('Color Matching Functions of Primaries')
 
+%% Question 4 & 5
 
 
 %Converting from CMFs to CIE standard colorimeter observer
-
-
+V_lamda = transpose(CIE_source(:,2))
 
 % Fixing residual error in calculating
 CIE_source = cie_dataset{:,[2:4]};
