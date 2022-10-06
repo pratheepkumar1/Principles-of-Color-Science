@@ -6,12 +6,11 @@ light_sources_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="Sources");
 lms_matrix = transpose(lms_dataset{:,[2:4]});
 
 
-[light_sources_numRows,light_sources_numCols] = size(light_sources_dataset); 
-normalize_s_factor = 100*ones(light_sources_numRows,1); %normalise the matrix values to 0-1
-incandescent_source = light_sources_dataset{:,2}./ normalize_s_factor;
-daylight_source= light_sources_dataset{:,3} ./ normalize_s_factor;
-n_lamda = mean(diff(light_sources_dataset{:,1}))
-
+% [light_sources_numRows,light_sources_numCols] = size(light_sources_dataset); 
+% normalize_s_factor = 100*ones(light_sources_numRows,1); %normalise the matrix values to 0-1
+% incandescent_source = light_sources_dataset{:,2}./ normalize_s_factor;
+% daylight_source= light_sources_dataset{:,3} ./ normalize_s_factor;
+% n_lamda = mean(diff(light_sources_dataset{:,1}))
 
 
 % create a diagonal matrix to calculate illuminant's spectral power distribution = S𝜆
@@ -37,8 +36,8 @@ LMS_daylight_stimuli
 % Incandescent is L2
 
 % LMS_daylight_lightsource
-LMS_daylight_lightsource = transpose(lms_matrix * s_daylight_matrix)
-LMS_incandescent_lightsource = transpose(lms_matrix * s_incandescent_matrix)
+LMS_daylight_lightsource = LMS_source(lms_matrix,s_daylight_matrix,n_lamda)
+LMS_incandescent_lightsource = LMS_source(lms_matrix,s_incandescent_matrix,n_lamda)
 
 
 
@@ -59,8 +58,7 @@ degree_of_adaptation = 1;
 % m_von_kries_daylight_factor = diag((degree_of_adaptation*LMS_white_daylight)+...
 %     ((1-degree_of_adaptation)*LMS_white_incandescent))./(LMS_white_incandescent);
 
-LMS_daylight_von_kries = transpose(m_von_kries_daylight_factor * transpose(LMS_incandescent_stimuli));
-LMS_incandescent_von_kries = transpose(m_von_kries_incadescent_factor * transpose(LMS_daylight_stimuli));
+vonkries_factor = vonkries(LMS_daylight_lightsource,LMS_incandescent_lightsource,degree_of_adaptation)
 
 LMS_incandescent_von_kries
 LMS_daylight_von_kries
@@ -97,5 +95,19 @@ opponency_incandescent(16,:)
 
 
 function T_stimuli = LMS_stimuli(t,s,r,n_lamda)
-    T_stimuli = transpose(t*s*r*n_lamda)
+    T_stimuli = custom_normalization(transpose(t*s*r*n_lamda));
+end
+
+function T_source = LMS_source(t,s,n_lamda)
+    T_source = custom_normalization(transpose(t*s*n_lamda));
+end
+
+function M_factor = vonkries(LightA,LightB,degree_of_adaptation)
+    M_factor = diag((degree_of_adaptation*LightB)+...
+        ((1-degree_of_adaptation)*LightA))./(LightA);
+end
+
+function n = custom_normalization(x)
+    max_value = max(x, [], 'all');
+    n = x/max_value;
 end
