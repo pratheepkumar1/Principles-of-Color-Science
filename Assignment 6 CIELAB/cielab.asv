@@ -111,45 +111,41 @@ table_cc_D65 = createTablexyz(chromacity_coord_D65_two_deg);
 
 
 %% Question 6 (Bonus)
+
 %Get spectral radiance of Source A and Source D65
 sources_A = interpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
 sources_D65 = interpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
 
-% Tristimulus value for Source A and Source D65 for 2 degree observer
+% Tristimulus value of Source A and Source D65 for 2 degree observer
 wp_A_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_A,d_lambda);
 wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_D65,d_lambda);
 
-% Chromaticity Coordinates of the illuminant
-cc_wp_A_two_deg = calChromacityCoordinates(wp_A_two_deg_source')
-cc_wp_D65_two_deg = calChromacityCoordinates(wp_D65_two_deg_source')
+% Chromaticity Coordinates of Source A and Source D65 for 2 degree observer
+cc_wp_A_two_deg = calChromacityCoordinates(wp_A_two_deg_source');
+cc_wp_D65_two_deg = calChromacityCoordinates(wp_D65_two_deg_source');
 
-hold on
-plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-');
-scatter(cc_wp_A_two_deg(1,:),cc_wp_A_two_deg(2,:),36,'filled','black');
-scatter(table_cc_A{:,1},table_cc_A{:,2},24,'black');
-scatter(cc_wp_D65_two_deg(1,:),cc_wp_D65_two_deg(2,:),36,'filled','green');
-scatter(table_cc_D65{:,1},table_cc_D65{:,2},24,'green');
-axis equal
-hold off
+% hold on
+% plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-');
+% scatter(cc_wp_A_two_deg(1,:),cc_wp_A_two_deg(2,:),36,'filled','black');
+% scatter(table_cc_A{:,1},table_cc_A{:,2},24,'black');
+% scatter(cc_wp_D65_two_deg(1,:),cc_wp_D65_two_deg(2,:),36,'filled','green');
+% scatter(table_cc_D65{:,1},table_cc_D65{:,2},24,'green');
+% axis equal
+% hold off
 
 
 %% Question 7
 
-%Get spectral radiance of Source A and Source D65
-sources_A = interpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
-sources_D65 = interpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
+
+%Calculate L_star, a_star, b_star, C_star for all patches in A and D65  
+[L_A, a_A, b_A, C_A] = calcXYZtoCIELAB(tristimulus_XYZ_A_two_deg,wp_A_two_deg_source);
 
 
-% Tristimulus value for Source A and Source D65 for 2 degree observer
-tristimulus_XYZ_A_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_A,d_lambda);
-tristimulus_XYZ_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_D65,d_lambda);
-
-% max((calChromacityCoordinates(tristimulus_XYZ_A_two_deg_source)),[],2)
-(calChromacityCoordinates(tristimulus_XYZ_D65_two_deg_source));
 
 
-% max(tristimulus_XYZ_A_two_deg_source,[],2)
-% max(tristimulus_XYZ_D65_two_deg_source,[],2)
+
+
+
 
 
 %% Functions
@@ -172,7 +168,7 @@ end
 function t = calcTristimulus(xyz_value,source,material,d_lambda)   
 
     %Calculate normalizing constant
-    k = (100/(source * xyz_value(:,2) * d_lambda))/100;
+    k = 100/(source * xyz_value(:,2) * d_lambda);
 
     s_lambda = diag(source);
 
@@ -202,6 +198,31 @@ function ts = calcTristimulusSource(xyz_value,source,d_lambda)
 %   t = custom_normalization(t);
 end
 
+
+%Function to calculate CIELAB from XYZ
+function [L_star,a_star,b_star,C_star] = calcXYZtoCIELAB(XYZ,whitepoint)
+    XYZ_Prime = calcXYZPrime(XYZ,whitepoint);
+    L_star = (116 * calConstants(XYZ_Prime(2,:))) - 16;
+    a_star= 500*(calConstants(XYZ_Prime(1,:)) - calConstants(XYZ_Prime(2,:)));
+    b_star = 200*(calConstants(XYZ_Prime(2,:)) - calConstants(XYZ_Prime(3,:)));
+    C_star = ((a_star).^2 + (b_star).^2).^(1/2);
+end
+
+
+% Calculate X Prime, Y Prime and Z Prime
+function XYZ_Prime = calcXYZPrime(XYZ,whitepoint)
+    XYZ_Prime = XYZ./whitepoint';
+end
+
+
+%Function to calculate constants in a and b
+function k = calConstants(x)
+    if (x > (24/116)^3)
+        k = (x).^(1/3);
+    else
+        k = ((841/108).*x) + (16/116);
+    end
+end
 
 
 %Function to create table and assign x,y,z
