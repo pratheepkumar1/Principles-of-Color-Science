@@ -112,6 +112,11 @@ end
 [L_A, a_A, b_A, C_A] = calcXYZtoCIELAB(tristimulus_XYZ_A_two_deg,wp_A_two_deg_source);
 [L_D65, a_D65, b_D65, C_D65] = calcXYZtoCIELAB(tristimulus_XYZ_D65_two_deg,wp_D65_two_deg_source);
 
+
+CIELAB_A = [L_A; a_A; b_A; C_A];
+CIELAB_D65 = [L_D65; a_D65; b_D65; C_D65];
+
+
 %Plot a against b under source A
 % h = figure(3);
 % hold on
