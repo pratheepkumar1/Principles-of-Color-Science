@@ -9,11 +9,18 @@ cc_spectral_locus_dataset = readtable("TwoDegChromaticity.xlsx");
 
 
 % Create a interpolated data for the datasets
-intp_wavelength_info = struct('min',380,'max',780,'range',5);
+prompt = "Enter min wavelength for interpolation = ";
+min_value = input(prompt);
+prompt = "Enter max wavelength for interpolation = ";
+max_value = input(prompt);
+prompt = "Enter wavelength dataset interval range = ";
+range_value = input(prompt);
+intp_wavelength_info = struct('min',min_value,'max',max_value,'range',range_value);
 
 xyz_std_obs_two_deg = InterpolateData(xyz_std_obs_two_deg_dataset{:,1},xyz_std_obs_two_deg_dataset{:,2:end},intp_wavelength_info);
 xyz_std_obs_ten_deg = InterpolateData(xyz_std_obs_ten_deg_dataset{:,1},xyz_std_obs_ten_deg_dataset{:,2:end},intp_wavelength_info);
-patches = patch_dataset{2:end,2:25};
+patches = InterpolateData(patch_dataset{2:end,1},patch_dataset{2:end,2:end},intp_wavelength_info);
+% patches = patch_dataset{2:end,2:25};
 
 %Calculate change in Wavlength
 wavelength = patch_dataset{2:end,1};
@@ -22,11 +29,11 @@ d_lambda = mean(diff(wavelength));
 %% Question 1
 
 %Get spectral radiance of Source D50
-sources_D50 = interpolateData(source_dataset{:,1},source_dataset.D50,intp_wavelength_info);
+source_D50 = InterpolateData(source_dataset{:,1},source_dataset.D50,intp_wavelength_info);
 
 % Tristimulus value for all patches in D50 Source for 2 and 10 degree observer
-tristimulus_XYZ_D50_two_deg = calcTristimulus(xyz_std_obs_two_deg,sources_D50,patches,d_lambda);
-tristimulus_XYZ_D50_ten_deg = calcTristimulus(xyz_std_obs_ten_deg,sources_D50,patches,d_lambda);
+tristimulus_XYZ_D50_two_deg = calcTristimulus(xyz_std_obs_two_deg,source_D50,patches,d_lambda);
+tristimulus_XYZ_D50_ten_deg = calcTristimulus(xyz_std_obs_ten_deg,source_D50,patches,d_lambda);
 
 % chromacity_coordinates for all patches in D50 Source for 2 and 10 degree observer
 cc_D50_two_deg = calChromacityCoordinates(tristimulus_XYZ_D50_two_deg);
@@ -37,13 +44,13 @@ table_cc_D50 = createTablexyz(cc_D50_two_deg);
 %% Question 2
 
 %Get spectral radiance of Source A and Source D65
-sources_A = interpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
-sources_D65 = interpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
+source_A = InterpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
+source_D65 = InterpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
 
 
 % Tristimulus value for all patches in Source A and Source D65 for 2 degree observer
-tristimulus_XYZ_A_two_deg = calcTristimulus(xyz_std_obs_two_deg,sources_A,patches,d_lambda);
-tristimulus_XYZ_D65_two_deg = calcTristimulus(xyz_std_obs_two_deg,sources_D65,patches,d_lambda);
+tristimulus_XYZ_A_two_deg = calcTristimulus(xyz_std_obs_two_deg,source_A,patches,d_lambda);
+tristimulus_XYZ_D65_two_deg = calcTristimulus(xyz_std_obs_two_deg,source_D65,patches,d_lambda);
 
 % chromacity_coordinates for all patches in Source A and Source D65 for 2 degree observer
 cc_A_two_deg = calChromacityCoordinates(tristimulus_XYZ_A_two_deg);
@@ -78,18 +85,18 @@ table_cc_D65 = createTablexyz(cc_D65_two_deg);
 %% Question 6 (Bonus)
 
 %Get spectral radiance of Source A and Source D65
-sources_A = interpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
-sources_D65 = interpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
+source_A = InterpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
+source_D65 = InterpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
 
 % Tristimulus value of Source A and Source D65 for 2 degree observer
-wp_A_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_A,d_lambda);
-wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_D65,d_lambda);
+wp_A_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,source_A,d_lambda);
+wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,source_D65,d_lambda);
 
 % Chromaticity Coordinates of Source A and Source D65 for 2 degree observer
 cc_wp_A_two_deg = calChromacityCoordinates(wp_A_two_deg_source');
 cc_wp_D65_two_deg = calChromacityCoordinates(wp_D65_two_deg_source');
 
-cc_spectral_locus_dataset(1:81,2:end)
+% cc_spectral_locus_dataset(1:81,2:end)
 
 % Calculate the purity of each patch
 for i = 1:24
@@ -161,10 +168,6 @@ end
 
 
 %% Functions
-
-
-
-
 
 %Function to calculate Chromacity Coordinate
 function cc = calChromacityCoordinates(tristimulus_XYZ)
