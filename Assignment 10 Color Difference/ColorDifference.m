@@ -50,12 +50,15 @@ deltab_A = deltab(b_A_inkjet,b_A(:,13:24))
 
 deltaC_A = deltaC(C_A_inkjet,C_A(:,13:24))
 
+deltaH_A = deltaH(CIELAB_A_inkjet,CIELAB_A(:,13:24))
+
+deltaEab_A = deltaEab(deltaL_A,deltaa_A,deltab_A) 
 
 deltaE00_A = deltaE00(CIELAB_A_inkjet,CIELAB_A(:,13:24))
 
-
-((a_bat*b_std) - (a_std*b_bat)) / ...
-    ((0.5*((C_bat*C_std) + (a_bat*a_std) + (b_bat*b_std)))^1/2)
+% 
+% ((a_bat*b_std) - (a_std*b_bat)) / ...
+%     ((0.5*((C_bat*C_std) + (a_bat*a_std) + (b_bat*b_std)))^1/2)
 
 
 %% Functions
@@ -88,6 +91,39 @@ end
 function DC = deltaC(C_bat,C_std)
     DC = C_bat - C_std;
 end
+
+
+%Function to calculate Delta H
+function Dh = deltaH(bat,std)
+    Dh = hueAngle(bat(2,:),bat(3,:)) - hueAngle(std(2,:),std(3,:));
+end
+
+
+
+%Function to calculate hue angle
+function h = hueAngle(a,b)
+    h = atan2Deg(b,a);
+    if(h<0)
+        h = (180/pi)*h;
+    else
+        h = ((180/pi)*h)+360;
+    end
+end
+
+
+%Function to calculate Delta Eab
+function e = deltaEab(deltaL,deltaa,deltab)
+    e = (deltaL.^2 + deltaa.^2 + deltab.^2).^1/2;
+end
+
+
+function out = atan2Deg(inY,inX);
+    out = atan2(inY,inX).*180./pi;
+    out = out+(out<0).*360;
+end
+
+
+
 
 
 
