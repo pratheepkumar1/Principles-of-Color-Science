@@ -4,12 +4,18 @@ inkjetColorChecker_dataset = readtable("InkjetColorChecker.xlsx");
 source_dataset = readtable("Illuminant Data.xlsx");
 
 % Create a interpolated wavelength info for the datasets
-intp_wavelength_info = struct('min',360,'max',750,'range',10);
-
+intp_wavelength_info = struct('min',380,'max',750,'range',10);
 
 %Extracting illuminant A and D65 from the source dataset
 source_A = interpolateData(source_dataset{:,1},source_dataset.A,intp_wavelength_info);
 source_D65 = interpolateData(source_dataset{:,1},source_dataset.D65,intp_wavelength_info);
+
+
+
+
+
+
+
 
 
 

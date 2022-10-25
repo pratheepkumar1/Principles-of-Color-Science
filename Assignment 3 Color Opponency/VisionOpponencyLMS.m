@@ -14,8 +14,8 @@ lms_matrix = transpose(lms_dataset{:,[2:4]});
 
 
 % create a diagonal matrix to calculate illuminant's spectral power distribution = S𝜆
-s_incandescent_matrix = diag(incandescent_source);
-s_daylight_matrix = diag(daylight_source);
+s_incandescent_matrix = diag(light_sources_dataset{:,2});
+s_daylight_matrix = diag(light_sources_dataset{:,3});
 
 % Objectspectral reflectance factor = R𝜆 
 [color_checker_numRows,color_checker_numCols] = size(color_checker_dataset);

@@ -11,8 +11,8 @@ cc_spectral_locus_dataset = readtable("TwoDegChromaticity.xlsx");
 % Create a interpolated data for the datasets
 intp_wavelength_info = struct('min',380,'max',780,'range',5);
 
-xyz_std_obs_two_deg = interpolateData(xyz_std_obs_two_deg_dataset{:,1},xyz_std_obs_two_deg_dataset{:,2:end},intp_wavelength_info);
-xyz_std_obs_ten_deg = interpolateData(xyz_std_obs_ten_deg_dataset{:,1},xyz_std_obs_ten_deg_dataset{:,2:end},intp_wavelength_info);
+xyz_std_obs_two_deg = InterpolateData(xyz_std_obs_two_deg_dataset{:,1},xyz_std_obs_two_deg_dataset{:,2:end},intp_wavelength_info);
+xyz_std_obs_ten_deg = InterpolateData(xyz_std_obs_ten_deg_dataset{:,1},xyz_std_obs_ten_deg_dataset{:,2:end},intp_wavelength_info);
 patches = patch_dataset{2:end,2:25};
 
 %Calculate change in Wavlength
@@ -56,23 +56,22 @@ table_cc_D65 = createTablexyz(cc_D65_two_deg);
 %% Question 3
 
 
-% Working
-h = figure(1);
-hold on
-scatter(table_cc_D50{:,1},table_cc_D50{:,2},32,'MarkerFaceColor','#0F4786');
-scatter(table_cc_A{:,1},table_cc_A{:,2},32,'MarkerEdgeColor','#930796','MarkerFaceColor','#930796');
-scatter(table_cc_D65{:,1},table_cc_D65{:,2},32,'MarkerFaceColor','#089E32');
-plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-','LineWidth',2,'Color','black');
-axis equal
-xlim([0 0.9]);
-ylim([0 0.9]);
-xlabel('x');
-ylabel('y');
-title('Chromaticity Coordinates of 24 Patches for D50, A, D65');
-legend('D50','A','D65','Spectrum Locus');
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
+% % Working
+% hold on
+% scatter(table_cc_D50{:,1},table_cc_D50{:,2},32,'MarkerFaceColor','#0F4786');
+% scatter(table_cc_A{:,1},table_cc_A{:,2},32,'MarkerEdgeColor','#930796','MarkerFaceColor','#930796');
+% scatter(table_cc_D65{:,1},table_cc_D65{:,2},32,'MarkerFaceColor','#089E32');
+% plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-','LineWidth',2,'Color','black');
+% axis equal
+% xlim([0 0.9]);
+% ylim([0 0.9]);
+% xlabel('x');
+% ylabel('y');
+% title('Chromaticity Coordinates of 24 Patches for D50, A, D65');
+% legend('D50','A','D65','Spectrum Locus');
+% dcm_obj = datacursormode(h);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
 
 
 
@@ -90,115 +89,81 @@ wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_D65,d_
 cc_wp_A_two_deg = calChromacityCoordinates(wp_A_two_deg_source');
 cc_wp_D65_two_deg = calChromacityCoordinates(wp_D65_two_deg_source');
 
+cc_spectral_locus_dataset(1:81,2:end)
 
 % Calculate the purity of each patch
 for i = 1:24
     a = norm(cc_wp_A_two_deg(1:2,:)' - cc_D50_two_deg(1:2,i)');
-%     b = norm(cc_wp_A_two_deg(1:2,:)' - )
+%     b = norm(cc_wp_A_two_deg(1:2,:)' - cc_spectral_locus_dataset(1:81,2:end))
 end
-% 
-% figure(2)
-% hold on
-% plotChromaticity
-% plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-');
-% scatter(cc_wp_A_two_deg(1,:),cc_wp_A_two_deg(2,:),36,'filled','black');
-% scatter(cc_wp_D65_two_deg(1,:),cc_wp_D65_two_deg(2,:),36,'filled','green');
-% legend('A','D65');
-% axis equal
-% hold off
+
 
 
 %% Question 7
-
 
 %Calculate L_star, a_star, b_star, C_star for all patches in A and D65 source 
 [L_A, a_A, b_A, C_A] = calcXYZtoCIELAB(tristimulus_XYZ_A_two_deg,wp_A_two_deg_source);
 [L_D65, a_D65, b_D65, C_D65] = calcXYZtoCIELAB(tristimulus_XYZ_D65_two_deg,wp_D65_two_deg_source);
 
 %Plot a against b under source A
-h = figure(3);
-hold on
-scatter(a_A',b_A');
-xlabel('a^{*}');
-ylabel('b^{*}');
-title('CIELAB a^{*} vs b^{*} for 24 patches in A illuminant');
-xlim([-100 100]);
-ylim([-100 100]);
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-h = figure(4);
-hold on
-scatter(C_A',L_A');
-xlabel('Chroma (C^{*}_{ab})');
-ylabel('Lightness (L^{*}_{ab})');
-title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in A illuminant');
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-
-h = figure(5);
-hold on
-scatter(a_D65',b_D65');
-xlabel('a^{*}');
-ylabel('b^{*}');
-title('CIELAB a^{*} vs b^{*} for 24 patches in D65 illuminant');
-xlim([-100 100]);
-ylim([-100 100]);
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-h = figure(6);
-hold on
-scatter(C_D65',L_D65');
-xlabel('Chroma (C^{*}_{ab})');
-ylabel('Lightness (L^{*}_{ab})');
-title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in D65 illuminant');
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
+% h = figure(3);
+% hold on
+% scatter(a_A',b_A');
+% xlabel('a^{*}');
+% ylabel('b^{*}');
+% title('CIELAB a^{*} vs b^{*} for 24 patches in A illuminant');
+% xlim([-100 100]);
+% ylim([-100 100]);
+% axis equal
+% grid on
+% dcm_obj = datacursormode(h);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% u = figure(4);
+% hold on
+% scatter(C_A',L_A');
+% xlabel('Chroma (C^{*}_{ab})');
+% ylabel('Lightness (L^{*}_{ab})');
+% title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in A illuminant');
+% axis equal
+% grid on
+% dcm_obj = datacursormode(u);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% 
+% r = figure(5);
+% hold on
+% scatter(a_D65',b_D65');
+% xlabel('a^{*}');
+% ylabel('b^{*}');
+% title('CIELAB a^{*} vs b^{*} for 24 patches in D65 illuminant');
+% xlim([-100 100]);
+% ylim([-100 100]);
+% axis equal
+% grid on
+% dcm_obj = datacursormode(r);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% b = figure(6);
+% hold on
+% scatter(C_D65',L_D65');
+% xlabel('Chroma (C^{*}_{ab})');
+% ylabel('Lightness (L^{*}_{ab})');
+% title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in D65 illuminant');
+% axis equal
+% grid on
+% dcm_obj = datacursormode(b);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
 
 
 %% Functions
 
 
-%Function to interpolate the values to a consistent wavelength
-function i = interpolateData(wavelengths,values,intp_wavelength_data)
-    %Create the interpolant by passing wavelength and corresponding values to griddedInterpolant.
-    GI = griddedInterpolant(wavelengths,values);
 
-    % Create a vector of query points with 5nm spacing for 380 to 780 wavelength.
-    wl = intp_wavelength_data.min:intp_wavelength_data.range:intp_wavelength_data.max;
-
-    % Evaluate the interpolant at the each wavelength for each value set 
-    i = GI(wl);
-end
-
-
-%Function to calculate Tristimulus values for materials
-function t = calcTristimulus(xyz_value,source,material,d_lambda)   
-
-    %Calculate normalizing constant
-    k = (100/(source * xyz_value(:,2) * d_lambda))/100;
-
-    s_lambda = diag(source);
-
-    %Calculating tristimulus
-    t = k.*((s_lambda*xyz_value)'*material)*d_lambda;
-
-%   t = custom_normalization(t);
-end
 
 
 %Function to calculate Chromacity Coordinate
@@ -207,44 +172,6 @@ function cc = calChromacityCoordinates(tristimulus_XYZ)
     cc = tristimulus_XYZ./sum_XYZ;
 end
 
-
-%Function to calculate Tristimulus values for sources (Whitepoint)
-function ts = calcTristimulusSource(xyz_value,source,d_lambda)   
-
-    %Calculate normalizing constant
-    k = (100/(source * xyz_value(:,2) * d_lambda))/100;
-
-    %Calculating tristimulus
-    ts = k.*((source*xyz_value))*d_lambda;
-
-%   t = custom_normalization(t);
-end
-
-
-%Function to calculate CIELAB from XYZ
-function [L_star,a_star,b_star,C_star] = calcXYZtoCIELAB(XYZ,whitepoint)
-    XYZ_Prime = calcXYZPrime(XYZ,whitepoint)
-    L_star = (116 * calConstants(XYZ_Prime(2,:))) - 16;
-    a_star= 500*(calConstants(XYZ_Prime(1,:)) - calConstants(XYZ_Prime(2,:)));
-    b_star = 200*(calConstants(XYZ_Prime(2,:)) - calConstants(XYZ_Prime(3,:)));
-    C_star = ((a_star).^2 + (b_star).^2).^(1/2);
-end
-
-
-% Calculate X Prime, Y Prime and Z Prime
-function XYZ_Prime = calcXYZPrime(XYZ,whitepoint)
-    XYZ_Prime = XYZ./whitepoint';
-end
-
-
-%Function to calculate constants in a and b
-function k = calConstants(x)
-    if (x > (24/116)^3)
-        k = (x).^(1/3);
-    else
-        k = ((841/108).*x) + (16/116);
-    end
-end
 
 
 %Function to create table and assign x,y,z

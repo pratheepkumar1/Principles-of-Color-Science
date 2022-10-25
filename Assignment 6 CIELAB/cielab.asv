@@ -56,23 +56,22 @@ table_cc_D65 = createTablexyz(cc_D65_two_deg);
 %% Question 3
 
 
-% Working
-h = figure(1);
-hold on
-scatter(table_cc_D50{:,1},table_cc_D50{:,2},32,'MarkerFaceColor','#0F4786');
-scatter(table_cc_A{:,1},table_cc_A{:,2},32,'MarkerEdgeColor','#930796','MarkerFaceColor','#930796');
-scatter(table_cc_D65{:,1},table_cc_D65{:,2},32,'MarkerFaceColor','#089E32');
-plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-','LineWidth',2,'Color','black');
-axis equal
-xlim([0 0.9]);
-ylim([0 0.9]);
-xlabel('x');
-ylabel('y');
-title('Chromaticity Coordinates of 24 Patches for D50, A, D65');
-legend('D50','A','D65','Spectrum Locus');
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
+% % Working
+% hold on
+% scatter(table_cc_D50{:,1},table_cc_D50{:,2},32,'MarkerFaceColor','#0F4786');
+% scatter(table_cc_A{:,1},table_cc_A{:,2},32,'MarkerEdgeColor','#930796','MarkerFaceColor','#930796');
+% scatter(table_cc_D65{:,1},table_cc_D65{:,2},32,'MarkerFaceColor','#089E32');
+% plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-','LineWidth',2,'Color','black');
+% axis equal
+% xlim([0 0.9]);
+% ylim([0 0.9]);
+% xlabel('x');
+% ylabel('y');
+% title('Chromaticity Coordinates of 24 Patches for D50, A, D65');
+% legend('D50','A','D65','Spectrum Locus');
+% dcm_obj = datacursormode(h);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
 
 
 
@@ -90,83 +89,76 @@ wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,sources_D65,d_
 cc_wp_A_two_deg = calChromacityCoordinates(wp_A_two_deg_source');
 cc_wp_D65_two_deg = calChromacityCoordinates(wp_D65_two_deg_source');
 
+cc_spectral_locus_dataset(1:81,2:end)
 
 % Calculate the purity of each patch
 for i = 1:24
     a = norm(cc_wp_A_two_deg(1:2,:)' - cc_D50_two_deg(1:2,i)');
-%     b = norm(cc_wp_A_two_deg(1:2,:)' - )
+%     b = norm(cc_wp_A_two_deg(1:2,:)' - cc_spectral_locus_dataset(1:81,2:end))
 end
 
-% figure(2)
-% hold on
-plot chromaticity
-% plot(cc_spectral_locus_dataset{:,2},cc_spectral_locus_dataset{:,3},'-');
-% scatter(cc_wp_A_two_deg(1,:),cc_wp_A_two_deg(2,:),36,'filled','black');
-% scatter(cc_wp_D65_two_deg(1,:),cc_wp_D65_two_deg(2,:),36,'filled','green');
-% axis equal
-% hold off
 
 
 %% Question 7
 
-
+c = calcXYZtoCIELAB
 %Calculate L_star, a_star, b_star, C_star for all patches in A and D65 source 
 [L_A, a_A, b_A, C_A] = calcXYZtoCIELAB(tristimulus_XYZ_A_two_deg,wp_A_two_deg_source);
 [L_D65, a_D65, b_D65, C_D65] = calcXYZtoCIELAB(tristimulus_XYZ_D65_two_deg,wp_D65_two_deg_source);
 
 %Plot a against b under source A
-h = figure(2);
-hold on
-scatter(a_A',b_A');
-xlabel('a^{*}');
-ylabel('b^{*}');
-title('CIELAB a^{*} vs b^{*} for 24 patches in A illuminant');
-xlim([-100 100]);
-ylim([-100 100]);
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-h = figure(3);
-hold on
-scatter(C_A',L_A');
-xlabel('Chroma (C^{*}_{ab})');
-ylabel('Lightness (L^{*}_{ab})');
-title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in A illuminant');
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-
-h = figure(4);
-hold on
-scatter(a_D65',b_D65');
-xlabel('a^{*}');
-ylabel('b^{*}');
-title('CIELAB a^{*} vs b^{*} for 24 patches in D65 illuminant');
-xlim([-100 100]);
-ylim([-100 100]);
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
-
-h = figure(5);
-hold on
-scatter(C_D65',L_D65');
-xlabel('Chroma (C^{*}_{ab})');
-ylabel('Lightness (L^{*}_{ab})');
-title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in D65 illuminant');
-axis equal
-grid on
-dcm_obj = datacursormode(h);
-set(dcm_obj,'UpdateFcn',{@custom_label})
-hold off
+% h = figure(3);
+% hold on
+% scatter(a_A',b_A');
+% xlabel('a^{*}');
+% ylabel('b^{*}');
+% title('CIELAB a^{*} vs b^{*} for 24 patches in A illuminant');
+% xlim([-100 100]);
+% ylim([-100 100]);
+% axis equal
+% grid on
+% dcm_obj = datacursormode(h);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% u = figure(4);
+% hold on
+% scatter(C_A',L_A');
+% xlabel('Chroma (C^{*}_{ab})');
+% ylabel('Lightness (L^{*}_{ab})');
+% title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in A illuminant');
+% axis equal
+% grid on
+% dcm_obj = datacursormode(u);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% 
+% r = figure(5);
+% hold on
+% scatter(a_D65',b_D65');
+% xlabel('a^{*}');
+% ylabel('b^{*}');
+% title('CIELAB a^{*} vs b^{*} for 24 patches in D65 illuminant');
+% xlim([-100 100]);
+% ylim([-100 100]);
+% axis equal
+% grid on
+% dcm_obj = datacursormode(r);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
+% 
+% b = figure(6);
+% hold on
+% scatter(C_D65',L_D65');
+% xlabel('Chroma (C^{*}_{ab})');
+% ylabel('Lightness (L^{*}_{ab})');
+% title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 24 patches in D65 illuminant');
+% axis equal
+% grid on
+% dcm_obj = datacursormode(b);
+% set(dcm_obj,'UpdateFcn',{@custom_label})
+% hold off
 
 
 %% Functions
@@ -221,13 +213,7 @@ end
 
 
 %Function to calculate CIELAB from XYZ
-function [L_star,a_star,b_star,C_star] = calcXYZtoCIELAB(XYZ,whitepoint)
-    XYZ_Prime = calcXYZPrime(XYZ,whitepoint);
-    L_star = (116 * calConstants(XYZ_Prime(2,:))) - 16;
-    a_star= 500*(calConstants(XYZ_Prime(1,:)) - calConstants(XYZ_Prime(2,:)));
-    b_star = 200*(calConstants(XYZ_Prime(2,:)) - calConstants(XYZ_Prime(3,:)));
-    C_star = ((a_star).^2 + (b_star).^2).^(1/2);
-end
+
 
 
 % Calculate X Prime, Y Prime and Z Prime
