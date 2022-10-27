@@ -28,10 +28,10 @@ hP1 = hP1t + ((hP1t<hP2t)&(abs(hP1t-hP2t)>180)).*360;
 hP2 = hP2t + ((hP1t>hP2t)&(abs(hP1t-hP2t)>180)).*360;
 
 %Delta Values
-DLP = LabP1(1,:) - LabP2(1,:);
-DCP = CP1 - CP2;
-DhP = hP1 - hP2;
-DHP = 2*(CP1.*CP2).^(1/2).*sinDeg(DhP./2);
+DLP = LabP1(1,:) - LabP2(1,:)
+DCP = CP1 - CP2
+DhP = hP1 - hP2
+DHP = 2*(CP1.*CP2).^(1/2).*sinDeg(DhP./2)
 
 %Arithmetic mean of LCh' values
 mLP = (LabP1(1,:)+LabP2(1,:))./2;
@@ -55,6 +55,7 @@ kC = 1;
 kH = 1;
 
 De00 = ((DLP./kL./SL).^2+(DCP./kC./SC).^2+(DHP./kH./SH).^2+(RT.*(DCP./kC./SC).*(DHP./kH./SH))).^(1/2);
+
 
 %--------------
 function out = sinDeg(in);

@@ -10,7 +10,7 @@ end
 
 % Calculate X Prime, Y Prime and Z Prime
 function XYZ_Prime = calcXYZPrime(XYZ,whitepoint)
-    XYZ_Prime = XYZ./whitepoint';
+    XYZ_Prime = XYZ./whitepoint'
 end
 
 

@@ -23,8 +23,8 @@ patches = InterpolateData(patch_dataset{2:end,1},patch_dataset{2:end,2:end},intp
 % patches = patch_dataset{2:end,2:25};
 
 %Calculate change in Wavlength
-wavelength = patch_dataset{2:end,1};
-d_lambda = mean(diff(wavelength));
+% wavelength = patch_dataset{2:end,1};
+d_lambda = range_value;
 
 %% Question 1
 
