@@ -14,7 +14,6 @@ function XYZ_Prime = calcXYZPrime(XYZ,whitepoint)
 end
 
 
-
 %Function to calculate constants in a and b
 function k = calConstants(x)
     if (x > (24/116)^3)

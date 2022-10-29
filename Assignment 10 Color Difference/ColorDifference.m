@@ -17,6 +17,7 @@ d_lambda = input(prompt);
 wavelength_info = min_value:d_lambda:max_value;
 
 
+
 %Interpolating and extrapolating the dataset (as needed)
 xyz_std_obs_two_deg = interp1(xyz_std_obs_two_deg_dataset{:,1},xyz_std_obs_two_deg_dataset{:,2:end},wavelength_info,"linear","extrap");
 source_A = interp1(source_dataset{:,1},source_dataset.A,wavelength_info,"linear","extrap");
@@ -24,10 +25,25 @@ source_D65 = interp1(source_dataset{:,1},source_dataset.D65,wavelength_info,"lin
 patch_macbeth_ref = interp1(patch_dataset{2:end,1},patch_dataset{2:end,2:end},wavelength_info,"linear","extrap");
 inkjetColorChecker = interp1(inkjetColorChecker_dataset{2:end,1},inkjetColorChecker_dataset{2:end,2:end},wavelength_info,"linear","extrap");
 
+inkjetColorChecker_alt = interp1(inkjetColorChecker_dataset{2:end,1},inkjetColorChecker_dataset{2:end,2:end},wavelength_info,"linear","extrap");
+
+
+
+figure(1)
+hold on
+plot(inkjetColorChecker_dataset{2:end,1},inkjetColorChecker_dataset{2:end,2:end},'Color','blue');
+plot(wavelength_info,inkjetColorChecker(:,1:end),'--','Color','blue');
+% plot(wavelength_info,inkjetColorChecker_alt(:,1),'--','Color','red');
+legend('inkjet samples','After LINEAR extrapolation');
+hold off
 
 % White point value of Source A and Source D65 for 2 degree observer
 wp_A_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,source_A,d_lambda);
 wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,source_D65,d_lambda);
+
+
+
+
 
 
 %% Question 1
@@ -46,6 +62,63 @@ CIELAB_D65_inkjet = [L_D65_inkjet; a_D65_inkjet; b_D65_inkjet; C_D65_inkjet];
 
 table_CIELAB_A_inkjet = createTableCIELAB(CIELAB_A_inkjet)
 table_CIELAB_D65_inkjet = createTableCIELAB(CIELAB_D65_inkjet)
+
+
+% Plot a against b under source A
+h= figure(2);
+hold on
+scatter(a_A_inkjet',b_A_inkjet');
+xlabel('a^{*}');
+ylabel('b^{*}');
+title('CIELAB a^{*} vs b^{*} for 12 Inkjet patches in A illuminant');
+labels_patch = {'13','14','15','16','17','18','19','20','21','22','23','24'};
+text(a_A_inkjet',b_A_inkjet',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(h);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+u = figure(3);
+hold on
+scatter(C_A_inkjet',L_A_inkjet');
+xlabel('Chroma (C^{*}_{ab})');
+ylabel('Lightness (L^{*}_{ab})');
+title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 12 Inkjet patches in A illuminant');
+text(C_A_inkjet',L_A_inkjet',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(u);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+
+r = figure(4);
+hold on
+scatter(a_D65_inkjet',b_D65_inkjet');
+xlabel('a^{*}');
+ylabel('b^{*}');
+title('CIELAB a^{*} vs b^{*} for 12 Inkjet patches in D65 illuminant');
+text(a_D65_inkjet',b_D65_inkjet',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(r);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+b = figure(5);
+hold on
+scatter(C_D65_inkjet',L_D65_inkjet');
+xlabel('Chroma (C^{*}_{ab})');
+ylabel('Lightness (L^{*}_{ab})');
+title('CIELAB L^{*}_{ab} vs C^{*}_{ab} for 12 Inkjet patches in D65 illuminant');
+text(C_D65_inkjet',L_D65_inkjet',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(b);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
 
 
 %Visualizing to view the difference
@@ -98,11 +171,38 @@ color_diff_A = [deltaL_A; deltaa_A; deltab_A; deltaC_A; deltaH_A; deltaEab_A; de
 
 table_color_diff_A = createTableColorDiff(color_diff_A)
 
-figure(1)
+% figure(6)
+% hold on
+% x_value = linspace(1,12,12);
+% scatter(x_value,deltaEab_A','filled','red');
+% scatter(x_value,deltaE00_A',"filled",'green');
+% hold off
+
+w= figure(6);
 hold on
-x_value = linspace(1,12,12);
-scatter(x_value,deltaEab_A','filled','red');
-scatter(x_value,deltaE00_A',"filled",'green');
+scatter(deltaa_A',deltab_A');
+xlabel('Δa^{*}');
+ylabel('Δb^{*}');
+title('Δa^{*} vs Δb^{*} for 12 Inkjet patches and Macbeth patches in Illuminant A');
+text(deltaa_A',deltab_A',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(w);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+
+q= figure(7);
+hold on
+scatter(deltaC_A',deltaH_A');
+xlabel('ΔC^{*}');
+ylabel('ΔH^{*}');
+title('ΔC^{*} vs ΔH^{*} for 12 Inkjet patches and Macbeth patches in Illuminant A');
+text(deltaC_A',deltaH_A',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left');
+axis equal
+grid on
+dcm_obj = datacursormode(q);
+set(dcm_obj,'UpdateFcn',{@custom_label})
 hold off
 
 
@@ -129,19 +229,56 @@ color_diff_D65 = [deltaL_D65; deltaa_D65; deltab_D65; deltaC_D65; deltaH_D65; de
 table_color_diff_D65 = createTableColorDiff(color_diff_D65)
 
 
-figure(2)
+r= figure(8);
+hold on
+scatter(deltaa_D65',deltab_D65');
+xlabel('Δa^{*}');
+ylabel('Δb^{*}');
+title('Δa^{*} vs Δb^{*} for 12 Inkjet patches and Macbeth patches in Illuminant D65');
+text(deltaC_D65',deltaH_D65',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left')
+axis equal
+grid on
+dcm_obj = datacursormode(r);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+
+v= figure(9);
+hold on
+scatter(deltaC_D65',deltaH_D65');
+xlabel('ΔC^{*}');
+ylabel('ΔH^{*}');
+title('ΔC^{*} vs ΔH^{*} for 12 Inkjet patches and Macbeth patches in Illuminant D65');
+text(deltaC_D65',deltaH_D65',labels_patch,'VerticalAlignment','bottom','HorizontalAlignment','left')
+axis equal
+grid on
+dcm_obj = datacursormode(v);
+set(dcm_obj,'UpdateFcn',{@custom_label})
+hold off
+
+
+figure(10)
 hold on
 x_value = linspace(1,12,12);
-scatter(x_value,deltaEab_D65','filled','red');
-scatter(x_value,deltaE00_D65',"filled",'green');
+scatter(x_value,deltaEab_D65','filled','blue');
+scatter(x_value,deltaE00_D65',"MarkerEdgeColor",'blue');
+title('ΔE^{*}ab vs ΔE^{*}00 for 12 Inkjet patches and Macbeth patches in Illuminant D65');
+xticklabels({'12','13','14','15','16','17','18','19','20','21','22','23','24'});
+legend('Eab','E00');
 hold off
 
-
-figure(3)
+figure(11)
 hold on
-bar(deltaEab_D65);
-bar(deltaE00_D65);
+x_value = linspace(1,12,12);
+scatter(x_value,deltaEab_A','filled','blue');
+scatter(x_value,deltaE00_A',"MarkerEdgeColor",'blue');
+title('ΔE^{*}ab vs ΔE^{*}00 for 12 Inkjet patches and Macbeth patches in Illuminant A');
+xticklabels({'12','13','14','15','16','17','18','19','20','21','22','23','24'});
+legend('Eab','E00');
 hold off
+
+
+
 
 
 
