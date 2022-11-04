@@ -16,8 +16,8 @@ LabP1 = [Lab1(1,:) ; Lab1(2,:).*(1+G) ; Lab1(3,:)];
 LabP2 = [Lab2(1,:) ; Lab2(2,:).*(1+G) ; Lab2(3,:)];
 
 %Chroma
-CP1 = sqrt(LabP1(2,:).^2+LabP1(3,:).^2);
-CP2 = sqrt(LabP2(2,:).^2+LabP2(3,:).^2);
+CP1 = sqrt(LabP1(2,:).^2+LabP1(3,:).^2)
+CP2 = sqrt(LabP2(2,:).^2+LabP2(3,:).^2)
 
 %Hue Angle
 hP1t = atan2Deg(LabP1(3,:),LabP1(2,:));

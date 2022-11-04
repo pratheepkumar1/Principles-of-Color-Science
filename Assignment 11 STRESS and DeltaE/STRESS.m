@@ -22,19 +22,27 @@ deltah_colDiff = deltah(lab_trl,lab_std);
 
 deltaH_colDiff = deltaH(C_star_trl,C_star_std,deltah_colDiff);
 
+
+
 deltaEab_colDiff = deltaEab(deltaL_colDiff,deltaC_colDiff,deltaH_colDiff);
 
 deltaE00_colDiff = deltaE00(lab_trl,lab_std);
 
 deltaE94_colDiff = deltaE94(lab_trl,lab_std,C_star_trl,C_star_std);
 
-% STRESS_colDiff_E00 = CalcSTRESS(deltaE00_colDiff,deltaV_colDiff);
+
+
+STRESS_colDiff_E00 = CalcSTRESS(deltaE00_colDiff,deltaV_colDiff)
 
 STRESS_DuPont_E00 = CalcSTRESS(deltaE00_colDiff(:,1:156),deltaV_colDiff(:,1:156))
 
-% STRESS_colDiff_E00 = CalcSTRESS(deltaE00_colDiff,deltaV_colDiff);
+STRESS_colDiff_Eab = CalcSTRESS(deltaEab_colDiff,deltaV_colDiff)
 
 STRESS_DuPont_Eab = CalcSTRESS(deltaEab_colDiff(:,1:156),deltaV_colDiff(:,1:156))
+
+STRESS_colDiff_E94 = CalcSTRESS(deltaE94_colDiff,deltaV_colDiff)
+
+STRESS_DuPont_E94 = CalcSTRESS(deltaE94_colDiff(:,1:156),deltaV_colDiff(:,1:156))
 
 
 % r= figure(1);
@@ -137,13 +145,7 @@ end
 
 
 function st = CalcSTRESS(delE,delV)
-    sum(delE.^2);
-    sum(delE.*delV);
     F = sum(delE.^2)./sum(delE.*delV);
-    sum((delE-(F.*delV)).^2);
-    sum((F.^2).*(delV.^2));
-    sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2));
-    100*(sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2))).^(1/2);
     st = 100*(sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2))).^(1/2);
 end
 
