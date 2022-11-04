@@ -3,6 +3,8 @@
 
 % SL,SC&SH are based on the second set of Lab values.
 
+% function   [DhP,DHP,De00]=deltaE00(Lab1, Lab2)
+
 function   De00=deltaE00(Lab1, Lab2)
 
 %CIELAB Chroma
@@ -55,6 +57,8 @@ kC = 1;
 kH = 1;
 
 De00 = ((DLP./kL./SL).^2+(DCP./kC./SC).^2+(DHP./kH./SH).^2+(RT.*(DCP./kC./SC).*(DHP./kH./SH))).^(1/2);
+% De00 = ((DLP).^2+(DCP).^2+(DHP).^2).^(1/2);
+
 
 
 %--------------

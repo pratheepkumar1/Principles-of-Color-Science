@@ -5,8 +5,8 @@ colDiff_dataset = readtable("RIT_DuPont_Data_2019.xlsx");
 lab_std = (colDiff_dataset{:,5:7})';
 lab_trl = (colDiff_dataset{:,8:10})';
 
-C_star_std = C_star(lab_std(1,:),lab_std(2,:));
-C_star_trl = C_star(lab_trl(1,:),lab_trl(2,:));
+C_star_std = C_star(lab_std(2,:),lab_std(3,:));
+C_star_trl = C_star(lab_trl(2,:),lab_trl(3,:));
 
 deltaV_colDiff = (colDiff_dataset{:,4})';
 
@@ -28,7 +28,20 @@ deltaE00_colDiff = deltaE00(lab_trl,lab_std);
 
 deltaE94_colDiff = deltaE94(lab_trl,lab_std,C_star_trl,C_star_std);
 
-STRESS_DuPont = CalcSTRESS(deltaEab_colDiff,deltaV_colDiff);
+% STRESS_colDiff_E00 = CalcSTRESS(deltaE00_colDiff,deltaV_colDiff);
+
+STRESS_DuPont_E00 = CalcSTRESS(deltaE00_colDiff(:,1:156),deltaV_colDiff(:,1:156))
+
+% STRESS_colDiff_E00 = CalcSTRESS(deltaE00_colDiff,deltaV_colDiff);
+
+STRESS_DuPont_Eab = CalcSTRESS(deltaEab_colDiff(:,1:156),deltaV_colDiff(:,1:156))
+
+
+% r= figure(1);
+% hold on
+% scatter(deltaL_colDiff(:,1:156)',lab_std(1,1:156)');
+% hold off
+
 
 %% Functions
 
@@ -51,7 +64,7 @@ end
 
 
 function C = C_star(a_star,b_star)
-    C = ((a_star).^2 + (b_star).^2).^(1/2);
+    C = sqrt((a_star).^2 + (b_star).^2);
 end
 
 
@@ -118,15 +131,20 @@ function De94 = deltaE94(lab_bat,lab_ref,C_star_bat,C_star_ref)
     kC = 1;
     kH = 1;
 
-    De94 = ((deltaL_F./ kL./SL).^2+(deltaC_F./ kC./SC).^2+(deltaH_F./ kH./SH).^2).^(1/2);
+    De94 = ((deltaL_F./ (kL.*SL)).^2+(deltaC_F./ (kC.*SC)).^2+(deltaH_F./ (kH.*SH)).^2).^(1/2);
 
 end
 
 
-
 function st = CalcSTRESS(delE,delV)
+    sum(delE.^2);
+    sum(delE.*delV);
     F = sum(delE.^2)./sum(delE.*delV);
-    st = 100.*((sum(delE-((F.*delV).^2)))./(sum((F.^2).*(delV.^2))).^(1/2));
+    sum((delE-(F.*delV)).^2);
+    sum((F.^2).*(delV.^2));
+    sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2));
+    100*(sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2))).^(1/2);
+    st = 100*(sum((delE-(F.*delV)).^2)./sum((F.^2).*(delV.^2))).^(1/2);
 end
 
 
