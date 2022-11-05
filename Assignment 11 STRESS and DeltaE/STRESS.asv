@@ -64,7 +64,7 @@ scatter(deltaEab_colDiff',deltaV_colDiff,'filled','red','MarkerEdgeColor','black
 hold on
 scatter(deltaEab_colDiff(:,1:156)',deltaV_colDiff(:,1:156),'filled','green','MarkerEdgeColor','black');
 title('Stress: ΔEab vs ΔV')
-legend('All Pairs','DuPont');
+legend('Rest of the Pairs','DuPont');
 xlabel('ΔEab');
 ylabel('ΔV');
 xlim([0,4]);
@@ -77,7 +77,7 @@ scatter(deltaE94_colDiff',deltaV_colDiff,'filled','red','MarkerEdgeColor','black
 hold on
 scatter(deltaE94_colDiff(:,1:156)',deltaV_colDiff(:,1:156),'filled','green','MarkerEdgeColor','black');
 title('Stress: ΔE94 vs ΔV');
-legend('All Pairs','DuPont');
+legend('Rest of the Pairs','DuPont');
 xlabel('ΔE94');
 ylabel('ΔV');
 xlim([0,4]);
@@ -89,7 +89,7 @@ scatter(deltaE00_colDiff(:,157:end)',deltaV_colDiff(:,157:end),'filled','red','M
 hold on
 scatter(deltaE00_colDiff(:,1:156)',deltaV_colDiff(:,1:156),'filled','green','MarkerEdgeColor','black');
 title('Stress: ΔE00 vs ΔV');
-legend('All Pairs','DuPont');
+legend('Rest of the Pairs','DuPont');
 xlabel('ΔE00');
 ylabel('ΔV');
 xlim([0,4]);
