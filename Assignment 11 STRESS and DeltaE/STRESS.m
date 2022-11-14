@@ -8,7 +8,8 @@ lab_trl = (colDiff_dataset{:,8:10})';
 deltaV_colDiff = (colDiff_dataset{:,4})';
 
 
-%% Computing ΔEab, ΔE94, ΔE00 color difference metrics for all pairs
+%% Computing ΔEab, ΔE94, ΔE00 color difference metrics fo
+% r all pairs
 deltaEab_colDiff = deltaEab(lab_trl,lab_std);
 
 deltaE94_colDiff = deltaE94(lab_trl,lab_std);
