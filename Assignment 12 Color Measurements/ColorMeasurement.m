@@ -56,7 +56,7 @@ line(wavelength_info,blue_patch37);
 xlabel('Wavelength');
 ylabel('Reflectance Factor');
 legend('Trial 1','Trial 2','Trial 3','Trial 4','Trial 5','Trial 6','Trial 7','Trial 8','Trial 9','Trial 10')
-title('Patch 29')
+title('Patch 37 - Blue')
 hold off
 
 
@@ -68,26 +68,26 @@ wp_D65_two_deg_source = calcTristimulusSource(xyz_std_obs_two_deg,source_D65,10)
 
 
 % Tristimulus value for all patches in InkjetColorChecker in A and D65 Source for 2 degree observer
-tristimulus_XYZ_D65_two_deg_single_patch = calcTristimulus(xyz_std_obs_two_deg,source_D65,blue_patch37',10);
+tristimulus_XYZ_blue_patch37 = calcTristimulus(xyz_std_obs_two_deg,source_D65,blue_patch37',10);
 
 
 %Calculate L_star, a_star, b_star, C_star for all patches in InkjetColorChecker in A and D65 Source 
-[L_D65_single_patch, a_D65_single_patch, b_D65_single_patch, C_D65_single_patch] = calcXYZtoCIELAB(tristimulus_XYZ_D65_two_deg_single_patch,wp_D65_two_deg_source);
-CIELAB_D65_single_patch = [L_D65_single_patch; a_D65_single_patch; b_D65_single_patch; C_D65_single_patch];
-table_CIELAB_D65_single_patch = createTableCIELAB(CIELAB_D65_single_patch)
+[L_blue_patch37, a_blue_patch37, b_blue_patch37, C_blue_patch37] = calcXYZtoCIELAB(tristimulus_XYZ_blue_patch37,wp_D65_two_deg_source);
+CIELAB_blue_patch37 = [L_blue_patch37; a_blue_patch37; b_blue_patch37; C_blue_patch37];
+table_CIELAB_blue_patch37 = createTableCIELAB(CIELAB_blue_patch37)
 
 
 
 %% Functions
 
 %MCDM Calculation
-MCDM_blue_patch37 = calcMCDM(CIELAB_D65_single_patch(1,:),CIELAB_D65_single_patch(2,:),CIELAB_D65_single_patch(3,:)) 
+MCDM_blue_patch37 = calcMCDM(CIELAB_blue_patch37(1,:),CIELAB_blue_patch37(2,:),CIELAB_blue_patch37(3,:)) 
 
 function mcdm = calcMCDM(L_star,a_star,b_star)
     L_star_mean = mean(L_star);
     a_star_mean = mean(a_star);
     b_star_mean = mean(b_star);
-    n = numel(L_star)
+    n = numel(L_star);
     mcdm = (sum(((L_star-L_star_mean).^2+(a_star-a_star_mean).^2+(b_star-b_star_mean).^2).^(1/2)))./n;
 end
 
