@@ -108,13 +108,23 @@ xlabel('a*'); ylabel('b*'); zlabel('L*')
 % Use Matlab matrix-left-divide operator: 
 
 % example M: this will provide a starting point, but is not accurate
-% M = [-0.5   1.6  -2.4   1.8   0.5   0.5  -0.2
-%      -0.4   1.0  -1.0   2.2   0.0   0.3  -0.2
-%      -0.3   3.7  -3.1   1.9  -0.8   0.5  -0.2 ];
+K = [-0.5   1.6  -2.4   1.8   0.5   0.5  -0.2
+     -0.4   1.0  -1.0   2.2   0.0   0.3  -0.2
+     -0.3   3.7  -3.1   1.9  -0.8   0.5  -0.2 ];
 
 % replace M with your optimized matrix
 
 M = (patchC\SGXYZ)';
+
+XYZ_before = (K*patchC');
+XYZ_after = (M*patchC');
+
+figure;
+plot(SGwl,XYZ_before);
+hold on
+plot(SGwl,XYZ_after,'LineStyle','-')
+title('XYZ before and after least squar')
+
 
 
 % compute Delta E (D65 white already)
@@ -154,17 +164,9 @@ imwrite(imgRGB,'ImageOutput_sRGB.jpg');
 % Matrix to estimate spectra for each of the 140 CCSG patches
 M_Trans = SGref*pinv(patchC');
 
-
 % Plot of the Matrix
 figure;
-plot(SGwl,M_Trans,'LineWidth',2);
-xlim([380,730]);
-grid on;
-xlabel('Wavelength (nm)'); ylabel('Matrix Coefficient');
-title('matrix to estimate spectra for each of the 140 CCSG patches');
-
-
-
+plot(SGwl,M_Trans)
 
 
 % Plot of the actual and estimated spectra for the 6 patches
@@ -195,8 +197,8 @@ LabP1 = [Lab1(1,:) ; Lab1(2,:).*(1+G) ; Lab1(3,:)];
 LabP2 = [Lab2(1,:) ; Lab2(2,:).*(1+G) ; Lab2(3,:)];
 
 %Chroma
-CP1 = sqrt(LabP1(2,:).^2+LabP1(3,:).^2);
-CP2 = sqrt(LabP2(2,:).^2+LabP2(3,:).^2);
+CP1 = sqrt(LabP1(2,:).^2+LabP1(3,:).^2)
+CP2 = sqrt(LabP2(2,:).^2+LabP2(3,:).^2)
 
 %Hue Angle
 hP1t = atan2Deg(LabP1(3,:),LabP1(2,:));
