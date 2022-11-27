@@ -11,20 +11,26 @@ SGwl = (380:10:730)';
 
 figure;
 hold on
-plot(SGwl,coeff(1:5,:));
+plot(SGwl,coeff(:,1:5),'LineWidth',1.5);
 xlabel('Wavelength');
 ylabel('PCA Coefficient');
 xlim([380,730]);
+legend("e1","e2","e3","e4","e5");
 grid on
 hold off
 
-coeff_count = 1:1:36;
+
+%Calculating cumulative sum of the variance
+
+cumsum_var = cumsum(latent);
+cumsum_var_percent = (cumsum_var/cumsum_var(end,:))*100;
 
 figure;
 hold on
-bar(coeff_count,latent,1);
-xlabel('Principal Component Number');
-ylabel('cumulative percentage of variance');
+coeff_count = 1:1:36;
+plot(coeff_count,cumsum_var_percent,'LineWidth',1.5,'Color','red');
+xlabel('Number of Components');
+ylabel('Cumulative Variance (%)');
 xticks(1:1:36)
 grid on
 hold off
@@ -74,5 +80,9 @@ De00_second_max = max(De00_second);
 % 
 % if (De00_max <= 0.5)
 %     
+
+
+
+%% Functions
 
 
