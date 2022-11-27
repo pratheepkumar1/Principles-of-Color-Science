@@ -35,7 +35,7 @@ SG_reconst = score*coeff'+mu;
 %% Question 3
 
 % Reconstructed CCSG data with 1st principal component
-SG_reconst_first = score.*coeff(:,1)'+mu;
+SG_reconst_first = score(:,1)*coeff(:,1)'+mu;
 
 [num,txt] = xlsread('all_1nm_data.xlsx');
 cmf2 = interp1(num(:,1),num(:,6:8),SGwl);
@@ -53,8 +53,8 @@ De00_first_max = max(De00_first);
 
 %% Question 4
 
-% Reconstructed CCSG data with 1st principal component
-SG_reconst_second = score.*coeff(:,1:2)+mu;
+% Reconstructed CCSG data with 2nd principal component
+SG_reconst_second = score(:,1:2)*coeff(:,1:2)'+mu;
 
 SGXYZ_reconst_second = ((cmf2' * diag(D65) * SG_reconst_second') ./ (cmf2(:,2)' * D65) )';
 SGLab_reconst_second = xyz2lab(SGXYZ_reconst_second);
