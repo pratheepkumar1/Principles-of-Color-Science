@@ -180,7 +180,21 @@ subtitle('6 patches near the middle of the CCSG: blue, green, red, yellow, magen
 
 
 
+
+% A = SGEstLab;
+% b = SGLab;
+
+% x = fmincon(DeltaE00Optimized(M,patchC,SGLab),M_Trans,A,b);
+
 %% Functions
+
+
+% function DeOpt = DeltaE00Optimized(M,measured_patch,ref)
+%     estXYZ = M*measured_patch';
+%     estLAB = xyz2lab(estXYZ);
+%     DeOpt = deltaE00(estLAB',estXYZ');
+% 
+% end
 
 function   De00=deltaE00(Lab1, Lab2)
 

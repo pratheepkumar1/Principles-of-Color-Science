@@ -35,7 +35,7 @@ CMF_RGB_norm = custom_normalization(CMF_RGB);
 
 %Plotting the graph
 CMF_RGB_norm_transpose = transpose(CMF_RGB_norm);
-figure(1)
+figure;
 colors=['r','g','b'];
 labels = ['Red','Green','Blue'];
 for i = 1:3
@@ -43,11 +43,12 @@ for i = 1:3
     plot(lms_dataset{:,1},CMF_RGB_norm_transpose(:,i),"LineWidth",2,"Color",colors(i))
 end
 grid on
-hold off
 xlabel('Wavelength (in nm)')
 ylabel('Tristimulus Values')
 xlim([380 730])
 title('Color Matching Functions of Primaries')
+hold off
+
 
 %% Question 4 & 5
 
@@ -81,7 +82,7 @@ xyz_bar_norm = (custom_normalization(xyz_bar));
 CIE_source_norm = custom_normalization(CIE_source);
 xyz_bar_norm_transpose = transpose(xyz_bar_norm);
 
-figure(2)
+figure;
 colors=['r','g','b'];
 for i = 1:3
     hold on
@@ -89,12 +90,12 @@ for i = 1:3
     plot(lms_dataset{:,1},CIE_source_norm(:,i),"LineWidth",1,"Color",colors(i),"LineStyle","--");
 end
 grid on
-hold off
 xlabel('Wavelength (in nm)');
 ylabel('Tristimulus Values');
 xlim([lms_dataset{1,1} lms_dataset{end,1}]);
 title('Color Matching Functions of Primaries');
 legend('LCD display x','CIE1931 std observer x','LCD display y','CIE1931 std observer y','LCD display z','CIE1931 std observer z');
+hold off
 
 
 % Function to normalize a matrix with its peak value (not using default normalize function)

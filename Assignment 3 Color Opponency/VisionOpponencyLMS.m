@@ -1,111 +1,99 @@
+%% Reading the Dataset
+warning('off','all');
 color_checker_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="ColorChecker");
 lms_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="LMS");
 light_sources_dataset = readtable("HW_Opponency_Data.xlsx",Sheet="Sources");
 
+%Change in Wavelength
+wavelength = 380:10:730;
+d_lambda = mean(diff(wavelength));
+
 % Create LMS relative sensitivity matrix
-lms_matrix = transpose(lms_dataset{:,[2:4]});
-
-
-% [light_sources_numRows,light_sources_numCols] = size(light_sources_dataset); 
-% normalize_s_factor = 100*ones(light_sources_numRows,1); %normalise the matrix values to 0-1
-% incandescent_source = light_sources_dataset{:,2}./ normalize_s_factor;
-% daylight_source= light_sources_dataset{:,3} ./ normalize_s_factor;
-% n_lamda = mean(diff(light_sources_dataset{:,1}))
-
+lms_matrix = transpose(lms_dataset{:,2:4});
 
 % create a diagonal matrix to calculate illuminant's spectral power distribution = S𝜆
-s_incandescent_matrix = diag(light_sources_dataset{:,2});
-s_daylight_matrix = diag(light_sources_dataset{:,3});
+s_incandescent_matrix = diag(custom_normalization(light_sources_dataset{:,2}));
+s_daylight_matrix = diag(custom_normalization(light_sources_dataset{:,3}));
 
 % Objectspectral reflectance factor = R𝜆 
 [color_checker_numRows,color_checker_numCols] = size(color_checker_dataset);
-r_matrix = color_checker_dataset{:,[2:color_checker_numCols]};
+r_matrix = color_checker_dataset{:,2:color_checker_numCols};
 
 % LMS values for all 24 ColorChecker samples
-LMS_incandescent_stimuli = LMS_stimuli(lms_matrix, s_incandescent_matrix , r_matrix,n_lamda);
-LMS_daylight_stimuli = LMS_stimuli(lms_matrix, s_daylight_matrix, r_matrix, n_lamda);
-
-
-LMS_incandescent_stimuli
-LMS_daylight_stimuli
-
-%-----------------------------------------
-% Chromatic Adaptation Transformations (CAT)
-
-% Equi-energy light source is L1
-% Incandescent is L2
-
-% LMS_daylight_lightsource
-LMS_daylight_lightsource = LMS_source(lms_matrix,s_daylight_matrix,n_lamda)
-LMS_incandescent_lightsource = LMS_source(lms_matrix,s_incandescent_matrix,n_lamda)
+LMS_stimuli_incandescent = (LMS_stimuli(lms_matrix, s_incandescent_matrix , r_matrix,d_lambda));
+LMS_stimuli_daylight = (LMS_stimuli(lms_matrix, s_daylight_matrix, r_matrix, d_lambda));
 
 
 
 
-% Getting signals of a stimulus that appears white
-white_col_number = find(string(color_checker_dataset.Properties.VariableNames) == "White");
-LMS_white_incandescent = transpose(LMS_incandescent_stimuli(white_col_number,:));
-LMS_white_daylight = transpose(LMS_daylight_stimuli(white_col_number,:));
+%% Chromatic Adaptation Transformations (CAT)
 
-% D_factor (complete chromatic adaptation = 1)
-degree_of_adaptation = 1;
+% Equi-energy light source is Illuminant E (L2)
+s_illuminantE = eye(36);
 
 
+% LMS_lightsource
+LMS_source_daylight = LMS_source(lms_matrix,s_daylight_matrix,d_lambda);
+LMS_source_incandescent = LMS_source(lms_matrix,s_incandescent_matrix,d_lambda);
+LMS_source_illuminantE = LMS_source(lms_matrix,s_illuminantE,d_lambda);
 
-% m_von_kries_incadescent_factor = diag((degree_of_adaptation*LMS_white_incandescent)+...
-%     ((1-degree_of_adaptation)*LMS_white_daylight))./(LMS_white_daylight);
+
+% Computing the CAT (Von Kries M Matrix)
+vonkries_incandescent = vonkries(LMS_source_incandescent,LMS_source_illuminantE);
+vonkries_daylight = vonkries(LMS_source_daylight,LMS_source_illuminantE);
+
+
+% LMS values of stimuli after applying von kries matrix
+LMS_stimuli_incandescent_vk = vonkries_incandescent * LMS_stimuli_incandescent;
+LMS_stimuli_daylight_vk = vonkries_daylight * LMS_stimuli_daylight;
+
+
+% patches_size = 1:1:24;
 % 
-% m_von_kries_daylight_factor = diag((degree_of_adaptation*LMS_white_daylight)+...
-%     ((1-degree_of_adaptation)*LMS_white_incandescent))./(LMS_white_incandescent);
-
-vonkries_factor = vonkries(LMS_daylight_lightsource,LMS_incandescent_lightsource,degree_of_adaptation)
-
-LMS_incandescent_von_kries
-LMS_daylight_von_kries
-
-%--------------------------------------------
-%Opponency Signals
-m_opponency = [.64 .39 -0.01; 1.12 -1.5 0.34; 0.35 0.15 -0.53];
-gamma = 2.4;
-opponency_incandescent = transpose(m_opponency * transpose((LMS_incandescent_von_kries).^(1/gamma)));
-opponency_daylight = transpose(m_opponency * transpose((LMS_daylight_von_kries).^(1/gamma)));
-opponency_incandescent;
-opponency_incandescent(19:24,:);
-opponency_incandescent(16,:);
-
-opponency_incandescent(:,1)
-opponency_daylight
-
-disp("Opponency for neutral patches (19-24)")
-opponency_incandescent(19:24,:)
-disp("Opponency for yellow (16)")
-opponency_incandescent(16,:)
-
-% plot(opponency_incandescent(19:24,:))
-
+% figure;
+% line(patches_size,LMS_stimuli_incandescent,'LineStyle','-');
 % hold on
-% L_daylight = plot(LMS_daylight(:,[1]));
-% % M_daylight = plot(LMS_daylight(:,[2]));
-% % S_daylight = plot(LMS_daylight(:,[3]));
-% L_daylight_von_kries = plot(LMS_daylight_von_kries(:,[1]));
-% % M_daylight_von_kries = plot(LMS_daylight_von_kries(:,[2]));
-% % S_daylight_von_kries = plot(LMS_daylight_von_kries(:,[3]));
+% line(patches_size,LMS_stimuli_incandescent_vk,'LineWidth',2);
 % hold off
-% grid on
 
 
-function T_stimuli = LMS_stimuli(t,s,r,n_lamda)
-    T_stimuli = custom_normalization(transpose(t*s*r*n_lamda));
+%% Opponency Signal
+
+m_opponency = [0.64 0.39 -0.01; 1.12 -1.50 0.34; 0.35 0.15 -0.53];
+
+gamma = 2.4;
+
+opponency_incandescent = calcOpponency(m_opponency,LMS_stimuli_incandescent_vk,gamma);
+opponency_daylight = calcOpponency(m_opponency,LMS_stimuli_daylight_vk,gamma);
+
+
+%% Functions 
+
+
+% Function to calculate LMS of the stimuli
+function T_stimuli = LMS_stimuli(t,s,r,d)
+    T_stimuli = (t*s*r*d);
 end
 
-function T_source = LMS_source(t,s,n_lamda)
-    T_source = custom_normalization(transpose(t*s*n_lamda));
+
+% Function to calculate LMS of the light source
+function T_source = LMS_source(t,s,d)
+    T_source = (t*s*d);
 end
 
-function M_factor = vonkries(LightA,LightB,degree_of_adaptation)
-    M_factor = diag((degree_of_adaptation*LightB)+...
-        ((1-degree_of_adaptation)*LightA))./(LightA);
+
+% Function to calculate Chromatic Adaptation Transformation - Von Kries
+function M_factor = vonkries(L1,L2)
+    M_factor = diag([L2(:,1)\L1(:,1) ; L2(:,2)\L1(:,2) ; L2(:,3)\L1(:,3)]);
 end
+
+
+% Function to calculate Opponency
+function opp = calcOpponency(m_opponency, LMS_vk, gamma)
+    opp = m_opponency * ((LMS_vk).^(1/gamma));
+end
+
+
 
 function n = custom_normalization(x)
     max_value = max(x, [], 'all');
