@@ -2,12 +2,12 @@
 warning('off','all');
 SGref_dataset = readtable("ccsg.xlsx");
 SGref = SGref_dataset{:,5:end};
-
-%Compute the principal components of 36 
-[coeff,score,latent,tsquared,explained,mu] = pca(SGref);
-coeff;
-
 SGwl = (380:10:730)';
+
+%Compute the principal components of 36 wavelengths using 
+[coeff,score,latent,tsquared,explained,mu] = pca(SGref);
+
+
 
 figure;
 hold on
@@ -70,16 +70,23 @@ De00_second_mean = mean(De00_second);
 De00_second_max = max(De00_second);
 
 
+
 %% Bonus
 
-% coefficient_number = 1;
-% 
-% for i=1:36
-%     SG_reconst = score.*coeff(:,)'+mu;
-% end
-% 
-% if (De00_max <= 0.5)
-%     
+for i = 1:36
+    SG_reconst_f = score(:,1:i)*coeff(:,1:i)'+mu; 
+    SGXYZ_reconst_f = ((cmf2' * diag(D65) * SG_reconst_f') ./ (cmf2(:,2)' * D65) )';
+    SGLab_reconst_f = xyz2lab(SGXYZ_reconst_f);
+    De00_f = deltaE00(SGLab_reconst_f',SGLab_ref');
+    De00_f_mean = mean(De00_f);
+    De00_f_max = max(De00_f);
+    if(De00_f_max <= 0.5)
+        disp("Number of coefficients to minimize De00 to 0.5 is " + i)
+        break;
+    end
+end
+
+    
 
 
 
