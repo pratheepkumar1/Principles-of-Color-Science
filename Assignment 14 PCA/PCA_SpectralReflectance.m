@@ -42,7 +42,7 @@ hold off
 SG_reconst = score*coeff'+mu;
 
 %Confirm if reconstruct match
-
+isequal(fi(SG_ref),fi(SG_reconst))
 
 %% Question 3
 
