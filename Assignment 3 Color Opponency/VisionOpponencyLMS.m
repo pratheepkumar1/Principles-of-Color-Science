@@ -12,30 +12,35 @@ d_lambda = mean(diff(wavelength));
 lms_matrix = transpose(lms_dataset{:,2:4});
 
 % create a diagonal matrix to calculate illuminant's spectral power distribution = S𝜆
-s_incandescent_matrix = diag(custom_normalization(light_sources_dataset{:,2}));
-s_daylight_matrix = diag(custom_normalization(light_sources_dataset{:,3}));
+s_incandescent_matrix = (normalize(light_sources_dataset{:,2},'range'));
+s_daylight_matrix = (normalize(light_sources_dataset{:,3},'range'));
+
+%%%explain normalization is done to light sources
+
 
 % Objectspectral reflectance factor = R𝜆 
 [color_checker_numRows,color_checker_numCols] = size(color_checker_dataset);
 r_matrix = color_checker_dataset{:,2:color_checker_numCols};
 
 % LMS values for all 24 ColorChecker samples
-LMS_stimuli_incandescent = (LMS_stimuli(lms_matrix, s_incandescent_matrix , r_matrix,d_lambda));
-LMS_stimuli_daylight = (LMS_stimuli(lms_matrix, s_daylight_matrix, r_matrix, d_lambda));
-
-
+LMS_stimuli_incandescent = LMS_stimuli(lms_matrix,diag(s_incandescent_matrix), r_matrix,d_lambda);
+LMS_stimuli_daylight = LMS_stimuli(lms_matrix,diag(s_daylight_matrix), r_matrix, d_lambda);
 
 
 %% Chromatic Adaptation Transformations (CAT)
 
 % Equi-energy light source is Illuminant E (L2)
-s_illuminantE = eye(36);
+s_illuminantE = ones(36,1);
 
 
 % LMS_lightsource
 LMS_source_daylight = LMS_source(lms_matrix,s_daylight_matrix,d_lambda);
 LMS_source_incandescent = LMS_source(lms_matrix,s_incandescent_matrix,d_lambda);
 LMS_source_illuminantE = LMS_source(lms_matrix,s_illuminantE,d_lambda);
+
+% LMS_source_daylight = LMS_source(lms_matrix,diag(s_daylight_matrix),d_lambda);
+% LMS_source_incandescent = LMS_source(lms_matrix,diag(s_incandescent_matrix),d_lambda);
+% LMS_source_illuminantE = LMS_source(lms_matrix,diag(s_illuminantE),d_lambda);
 
 
 % Computing the CAT (Von Kries M Matrix)
@@ -83,8 +88,10 @@ end
 
 
 % Function to calculate Chromatic Adaptation Transformation - Von Kries
-function M_factor = vonkries(L1,L2)
-    M_factor = diag([L2(:,1)\L1(:,1) ; L2(:,2)\L1(:,2) ; L2(:,3)\L1(:,3)]);
+function M_factor = vonkries(LMS1,LMS2)
+%     M_factor = diag([LMS2(1,:)\LMS1(1,1) ; LMS2(:,2)\LMS1(:,2) ;...
+%         LMS2(:,3)\LMS1(:,3)]);
+    M_factor = diag(LMS2./LMS1);
 end
 
 
