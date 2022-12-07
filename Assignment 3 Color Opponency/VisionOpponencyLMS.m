@@ -38,10 +38,6 @@ LMS_source_daylight = LMS_source(lms_matrix,s_daylight_matrix,d_lambda);
 LMS_source_incandescent = LMS_source(lms_matrix,s_incandescent_matrix,d_lambda);
 LMS_source_illuminantE = LMS_source(lms_matrix,s_illuminantE,d_lambda);
 
-% LMS_source_daylight = LMS_source(lms_matrix,diag(s_daylight_matrix),d_lambda);
-% LMS_source_incandescent = LMS_source(lms_matrix,diag(s_incandescent_matrix),d_lambda);
-% LMS_source_illuminantE = LMS_source(lms_matrix,diag(s_illuminantE),d_lambda);
-
 
 % Computing the CAT (Von Kries M Matrix)
 vonkries_incandescent = vonkries(LMS_source_incandescent,LMS_source_illuminantE);
