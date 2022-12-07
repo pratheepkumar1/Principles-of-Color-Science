@@ -2,7 +2,7 @@
 function ts = calcTristimulusSource(xyz_value,source,d_lambda)   
 
     %Calculate normalizing constant
-    k = (100/(source * xyz_value(:,2) * d_lambda))/100;
+    k = 100/(source * xyz_value(:,2) * d_lambda);
 
     %Calculating tristimulus
     ts = k.*((source*xyz_value))*d_lambda;
